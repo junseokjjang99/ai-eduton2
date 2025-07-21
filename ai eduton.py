@@ -8,11 +8,10 @@ import openai
 # OpenAI 설정
 
 open_ai_api_key = "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"
-openai.api_key = os.getenv(open_ai_api_key)  
+client = OpenAI(api_key=os.getenv("open_ai_api_key"))
 
-# 🧠 AI 질문 함수
 def ask_ai(question):
-    response = openai.chat.completions.create(
+    response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {"role": "system", "content": "너는 친환경 전문가 AI야."},
