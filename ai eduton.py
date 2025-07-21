@@ -293,7 +293,7 @@ messages = {
             "slightly_wilting": "조금 시들었어요. 🌲 탄소 배출량을 줄여주세요!",
             "wilting": "많이 시들었어요. 🍂 환경 보호에 더 신경 써주세요!",
             "dead": "나무가 죽었어요... 💀 심각한 수준입니다. 환경을 위해 노력해주세요!"
-        }
+        },
         "ko": "쓰레기 입력", "오늘 배출량 및 점수 확인", "하루 목표 설정", "환경 퀴즈", "AI챗봇", "평균 배출량과 비교"
     },
     "en": {
@@ -318,7 +318,7 @@ messages = {
             "slightly_wilting": "Slightly wilting. 🌲 Please reduce your carbon emissions!",
             "wilting": "Very wilting. 🍂 Pay more attention to environmental protection!",
             "dead": "The tree is dead... 💀 This is serious. Please work for the environment!"
-        }
+        },
         "en": "Enter waste", "View today's emissions and score", "Set daily target", "Eco Quiz", "AI Chatbot", "Compare with average"
     },
     "zh": {
@@ -343,7 +343,7 @@ messages = {
             "slightly_wilting": "有点枯萎了。🌲 请减少碳排放！",
             "wilting": "枯萎得很厉害。🍂 请更注重环境保护！",
             "dead": "树死了... 💀 情况很严重。请为环境努力！"
-        }
+        },
         "zh": "输入垃圾", "查看今日排放量和分数", "设置每日目标", "环保测验", "AI环保咨询", "与平均值比较"
     }
 }
