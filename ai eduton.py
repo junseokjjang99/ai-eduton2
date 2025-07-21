@@ -292,8 +292,8 @@ messages = {
             "healthy": "건강합니다! 🌳 이 상태를 유지하세요!",
             "slightly_wilting": "조금 시들었어요. 🌲 탄소 배출량을 줄여주세요!",
             "wilting": "많이 시들었어요. 🍂 환경 보호에 더 신경 써주세요!",
-            "dead": "나무가 죽었어요... 💀 심각한 수준입니다. 환경을 위해 노력해주세요!"
-         "compare_title": "📊 내 CO₂ 배출량과 평균 비교",
+            "dead": "나무가 죽었어요... 💀 심각한 수준입니다. 환경을 위해 노력해주세요!"},
+        "compare_title": "📊 내 CO₂ 배출량과 평균 비교",
         "today_emission_msg": "✅ 오늘 나의 CO₂ 배출량: **{value:.2f} kg**",
         "korea_avg_msg": "🇰🇷 대한민국 1인당 일일 평균 배출량: **{value:.1f} kg**",
         "oecd_avg_msg": "🌍 OECD 평균 1인당 일일 배출량: **{value:.1f} kg**",
@@ -324,8 +324,8 @@ messages = {
             "healthy": "Healthy! 🌳 Keep up the good work!",
             "slightly_wilting": "Slightly wilting. 🌲 Please reduce your carbon emissions!",
             "wilting": "Very wilting. 🍂 Pay more attention to environmental protection!",
-            "dead": "The tree is dead... 💀 This is serious. Please work for the environment!"
-         "compare_title": "📊 My CO₂ Emissions vs Average",
+            "dead": "The tree is dead... 💀 This is serious. Please work for the environment!"},
+        "compare_title": "📊 My CO₂ Emissions vs Average",
         "today_emission_msg": "✅ My CO₂ emissions today: **{value:.2f} kg**",
         "korea_avg_msg": "🇰🇷 Korea's daily average per person: **{value:.1f} kg**",
         "oecd_avg_msg": "🌍 OECD average per person: **{value:.1f} kg**",
@@ -356,7 +356,7 @@ messages = {
             "healthy": "健康！🌳 请保持下去！",
             "slightly_wilting": "有点枯萎了。🌲 请减少碳排放！",
             "wilting": "枯萎得很厉害。🍂 请更注重环境保护！",
-            "dead": "树死了... 💀 情况很严重。请为环境努力！"
+            "dead": "树死了... 💀 情况很严重。请为环境努力！"},
         "compare_title": "📊 我的CO₂排放量与平均值比较",
         "today_emission_msg": "✅ 我今天的CO₂排放量: **{value:.2f} kg**",
         "korea_avg_msg": "🇰🇷 韩国人均每日平均排放量: **{value:.1f} kg**",
