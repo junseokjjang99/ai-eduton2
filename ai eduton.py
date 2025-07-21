@@ -657,28 +657,28 @@ def app():
         display_ai_chat(lang)
 
   elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
-    st.header(messages[lang]["compare_title"])
-    today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+        st.header(messages[lang]["compare_title"])
+        today_co2, _ = get_today_co2_and_score(st.session_state['history'])
 
-    st.write(messages[lang]["today_emission_msg"].format(value=today_co2))
-    st.write(messages[lang]["korea_avg_msg"].format(value=KOREA_AVG_DAILY_CO2))
-    st.write(messages[lang]["oecd_avg_msg"].format(value=OECD_AVG_DAILY_CO2))
+        st.write(messages[lang]["today_emission_msg"].format(value=today_co2))
+        st.write(messages[lang]["korea_avg_msg"].format(value=KOREA_AVG_DAILY_CO2))
+        st.write(messages[lang]["oecd_avg_msg"].format(value=OECD_AVG_DAILY_CO2))
 
-    st.bar_chart({
-        "오늘 나" if lang == "ko" else "Me" if lang == "en" else "我": [today_co2],
-        "대한민국 평균" if lang == "ko" else "Korea avg" if lang == "en" else "韩国平均": [KOREA_AVG_DAILY_CO2],
-        "OECD 평균" if lang == "ko" else "OECD avg" if lang == "en" else "OECD平均": [OECD_AVG_DAILY_CO2]
-    })
+        st.bar_chart({
+            "오늘 나" if lang == "ko" else "Me" if lang == "en" else "我": [today_co2],
+            "대한민국 평균" if lang == "ko" else "Korea avg" if lang == "en" else "韩国平均": [KOREA_AVG_DAILY_CO2],
+            "OECD 평균" if lang == "ko" else "OECD avg" if lang == "en" else "OECD平均": [OECD_AVG_DAILY_CO2]
+        })
 
-    if today_co2 < KOREA_AVG_DAILY_CO2:
-        st.success(messages[lang]["less_than_korea"])
-    else:
-        st.warning(messages[lang]["more_than_korea"])
+        if today_co2 < KOREA_AVG_DAILY_CO2:
+            st.success(messages[lang]["less_than_korea"])
+        else:
+            st.warning(messages[lang]["more_than_korea"])
 
-    if today_co2 < OECD_AVG_DAILY_CO2:
-        st.info(messages[lang]["less_than_oecd"])
-    else:
-        st.info(messages[lang]["more_than_oecd"])
+        if today_co2 < OECD_AVG_DAILY_CO2:
+            st.info(messages[lang]["less_than_oecd"])
+        else:
+            st.info(messages[lang]["more_than_oecd"])
 
 if __name__ == "__main__":
     app()
