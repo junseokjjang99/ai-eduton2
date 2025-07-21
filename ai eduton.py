@@ -7,7 +7,7 @@ from openai import OpenAI
 
 # OpenAI 설정
 
-client = OpenAI(api_key=open_ai_api_key)
+client = OpenAI(api_key=API_KEY)
 
 def ask_ai(question):
     response = client.chat.completions.create(
