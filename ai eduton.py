@@ -626,7 +626,7 @@ def app():
                     st.error(messages[lang]["invalid_number"].replace("숫자를", "0 이상의 숫자를").replace("Please enter a number.", "Enter a number >= 0."))
 
 
-   if choice == menu_options[lang][1]:  # 오늘 배출량 및 점수 확인
+if choice == menu_options[lang][1]:  # 오늘 배출량 및 점수 확인
     st.header(menu_options[lang][1])
     today_co2, eco_score = get_today_co2_and_score(st.session_state['history'])
     st.info(f"📝 {messages[lang]['today_co2_emissions']} {today_co2:.2f} kg")
@@ -679,6 +679,7 @@ elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
         st.info(messages[lang]["less_than_oecd"])
     else:
         st.info(messages[lang]["more_than_oecd"])
+
 
 if __name__ == "__main__":
     app()
