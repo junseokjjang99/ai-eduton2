@@ -7,7 +7,7 @@ from openai import OpenAI
 
 # OpenAI 설정
 
-open_ai_api_key = "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"
+open_ai_api_key = "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"
 client = OpenAI(api_key=open_ai_api_key)
 
 def ask_ai(question):
