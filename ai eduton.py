@@ -542,9 +542,9 @@ def app():
     # 사이드바 라디오 버튼을 사용하여 메인 메뉴
     st.sidebar.title("메뉴")
     menu_options = {
-        "ko": ["쓰레기 입력", "오늘 배출량 및 점수 확인", "하루 목표 설정", "환경 퀴즈"],
-        "en": ["Enter waste", "View today's emissions and score", "Set daily target", "Eco Quiz"],
-        "zh": ["输入垃圾", "查看今日排放量和分数", "设置每日目标", "环保测验"]
+        "ko": ["쓰레기 입력", "오늘 배출량 및 점수 확인", "하루 목표 설정", "환경 퀴즈", "AI챗봇"],
+        "en": ["Enter waste", "View today's emissions and score", "Set daily target", "Eco Quiz", "AI Chatbot"],
+        "zh": ["输入垃圾", "查看今日排放量和分数", "设置每日目标", "环保测验", "AI环保咨询"]
     }
 
     choice = st.sidebar.radio("옵션을 선택하세요:", menu_options[lang])
