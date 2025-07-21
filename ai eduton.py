@@ -453,19 +453,19 @@ def app():
     elif choice == menu_options[lang][4]:
         display_ai_chat(lang)
 
-    elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
-        msg = compare_messages[lang]
-        st.header(msg["header"])
-        today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
+    msg = compare_messages[lang]
+    st.header(msg["header"])
+    today_co2, _ = get_today_co2_and_score(st.session_state['history'])
 
-        st.write(msg["today_co2"].format(value=today_co2))
-        st.write(msg["korea_avg"].format(value=KOREA_AVG_DAILY_CO2))
-        st.write(msg["oecd_avg"].format(value=OECD_AVG_DAILY_CO2))
+    st.write(msg["today_co2"].format(value=today_co2))
+    st.write(msg["korea_avg"].format(value=KOREA_AVG_DAILY_CO2))
+    st.write(msg["oecd_avg"].format(value=OECD_AVG_DAILY_CO2))
 
-        st.bar_chart({
-            msg["header"]: [today_co2],
-            msg["korea_avg"]: [KOREA_AVG_DAILY_CO2],
-            msg["oecd_avg"]: [OECD_AVG_DAILY_CO2]
+    st.bar_chart({
+        "오늘 나" if lang=="ko" else "Me" if lang=="en" else "我": [today_co2],
+        "대한민국 평균" if lang=="ko" else "Korea Avg" if lang=="en" else "韩国平均": [KOREA_AVG_DAILY_CO2],
+        "OECD 평균" if lang=="ko" else "OECD Avg" if lang=="en" else "OECD平均": [OECD_AVG_DAILY_CO2]
     })
 
     if today_co2 < KOREA_AVG_DAILY_CO2:
