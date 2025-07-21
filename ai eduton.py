@@ -6,7 +6,9 @@ import random
 import openai
 
 # OpenAI 설정
-openai.api_key = os.getenv("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")  
+
+open_ai_api_key = "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"
+openai.api_key = os.getenv(open_ai_api_key)  
 
 # 🧠 AI 질문 함수
 def ask_ai(question):
