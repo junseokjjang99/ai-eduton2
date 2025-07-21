@@ -301,7 +301,7 @@ messages = {
         "more_than_korea": "⚠️ 대한민국 평균보다 많이 배출했어요. 조금만 더 줄여볼까요?",
         "less_than_oecd": "🌱 OECD 평균보다도 낮은 배출량이에요!",
         "more_than_oecd": "🌏 OECD 평균보다 높은 배출량이에요. 다음엔 더 줄여봐요!"
-        }
+        },
     "en": {
         "welcome": "🌿 Let's start a small action for the environment!",
         "select_menu": "\n1. Enter waste\n2. View today's emissions and score\n3. Set daily target\n4. Eco Quiz\n5. Exit\nChoose: ",
@@ -332,7 +332,7 @@ messages = {
         "more_than_korea": "⚠️ You emitted more than the Korea average. Let's try to reduce it!",
         "less_than_oecd": "🌱 Lower than the OECD average!",
         "more_than_oecd": "🌏 Higher than the OECD average. Let's do better next time!"
-        }
+        },
     "zh": {
         "welcome": "🌿 开始为环境做一点小改变吧！",
         "select_menu": "\n1. 输入垃圾\n2. 查看今日排放量和分数\n3. 设置每日目标\n4. 环保测验\n5. 退出\n请选择: ",
