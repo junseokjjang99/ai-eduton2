@@ -5,13 +5,6 @@ import datetime
 import random
 from openai import OpenAI
 
-selected_waste_name = st.selectbox(
-    {"ko": "쓰레기 종류를 선택하세요:", "en": "Select waste type:", "zh": "请选择垃圾类型:"}[lang],
-    waste_names,
-    key=f"select_waste_{lang}"
-)
-
-
 KOREA_AVG_DAILY_CO2 = 27.0  
 OECD_AVG_DAILY_CO2 = 30.0
 
@@ -636,10 +629,11 @@ def app():
         st.header(menu_options[lang][0])
 
         waste_names = [data['names'][lang] for data in waste_data.values()]
-        selected_waste_name = st.selectbox(
-            {"ko": "쓰레기 종류를 선택하세요:", "en": "Select waste type:", "zh": "请选择垃圾类型:"}[lang],
-            waste_names
-        )
+       selected_waste_name = st.selectbox(
+    {"ko": "쓰레기 종류를 선택하세요:", "en": "Select waste type:", "zh": "请选择垃圾类型:"}[lang],
+    waste_names,
+    key=f"select_waste_{lang}"
+)
 
         waste_key = None
         for k, v in waste_data.items():
