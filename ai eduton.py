@@ -563,12 +563,14 @@ def app():
     # --- ✨ 이모지 트리 표시 로직 끝 ✨ ---
 
 
-    # 사이드바 라디오 버튼을 사용하여 메인 메뉴
+import streamlit as st
+
+def app():
     st.sidebar.title("메뉴")
     menu_options = {
-    "ko": ["쓰레기 입력", "오늘 배출량 및 점수 확인", "하루 목표 설정", "환경 퀴즈", "AI챗봇", "평균 배출량과 비교"],
-    "en": ["Enter waste", "View today's emissions and score", "Set daily target", "Eco Quiz", "AI Chatbot", "Compare with average"],
-    "zh": ["输入垃圾", "查看今日排放量和分数", "设置每日目标", "环保测验", "AI环保咨询", "与平均值比较"]
+        "ko": ["쓰레기 입력", "오늘 배출량 및 점수 확인", "하루 목표 설정", "환경 퀴즈", "AI챗봇", "평균 배출량과 비교"],
+        "en": ["Enter waste", "View today's emissions and score", "Set daily target", "Eco Quiz", "AI Chatbot", "Compare with average"],
+        "zh": ["输入垃圾", "查看今日排放量和分数", "设置每日目标", "环保测验", "AI环保咨询", "与平均值比较"]
     }
 
     choice = st.sidebar.radio("옵션을 선택하세요:", menu_options[lang])
@@ -579,7 +581,8 @@ def app():
         waste_names = [data['names'][lang] for data in waste_data.values()]
         selected_waste_name = st.selectbox(
             {"ko": "쓰레기 종류를 선택하세요:", "en": "Select waste type:", "zh": "请选择垃圾类型:"}[lang],
-            waste_names
+            waste_names,
+            key=f"select_waste_{lang}"
         )
 
         waste_key = None
@@ -596,17 +599,18 @@ def app():
                     min_value=0.0,
                     value=0.0,
                     step=1.0,
-                    format="%f"
+                    format="%f",
+                    key=f"count_input_{lang}"
                 )
             except ValueError:
                 st.error(messages[lang]["invalid_number"])
                 count = 0.0
 
-            if st.button({"ko": "입력", "en": "Submit", "zh": "提交"}[lang]):
+            if st.button({"ko": "입력", "en": "Submit", "zh": "提交"}[lang], key=f"submit_button_{lang}"):
                 if count >= 0:
                     result = calculate_impact(waste_key, count, lang)
-                    st.session_state['history'].append(result)
-                    save_history(st.session_state['history']) # 파일 시스템에 저장
+                    st.session_state.setdefault('history', []).append(result)
+                    save_history(st.session_state['history'])
 
                     st.subheader(f"📊 {messages[lang].get('result', '결과')}")
                     st.write(f"- **{waste_data[result['waste_key']]['names'][lang]}**: {result['count']} {result['unit']}")
@@ -624,63 +628,9 @@ def app():
                 else:
                     st.error(messages[lang]["invalid_number"].replace("숫자를", "0 이상의 숫자를").replace("Please enter a number.", "Enter a number >= 0."))
 
-
-if choice == menu_options[lang][0]:  # 쓰레기 입력
-    st.header(menu_options[lang][0])
-
-    waste_names = [data['names'][lang] for data in waste_data.values()]
-    selected_waste_name = st.selectbox(
-        {"ko": "쓰레기 종류를 선택하세요:", "en": "Select waste type:", "zh": "请选择垃圾类型:"}[lang],
-        waste_names,
-        key=f"select_waste_{lang}"  # key 추가해서 위젯 중복 문제 방지
-    )
-
-    waste_key = None
-    for k, v in waste_data.items():
-        if selected_waste_name == v["names"][lang]:
-            waste_key = k
-            break
-
-    if waste_key:
-        unit_text = waste_data[waste_key]["unit"][lang]
-        try:
-            count = st.number_input(
-                messages[lang]["input_count"].format(unit=unit_text),
-                min_value=0.0,
-                value=0.0,
-                step=1.0,
-                format="%f",
-                key=f"count_input_{lang}"  # key 추가 권장
-            )
-        except ValueError:
-            st.error(messages[lang]["invalid_number"])
-            count = 0.0
-
-        if st.button({"ko": "입력", "en": "Submit", "zh": "提交"}[lang], key=f"submit_button_{lang}"):
-            if count >= 0:
-                result = calculate_impact(waste_key, count, lang)
-                st.session_state['history'].append(result)
-                save_history(st.session_state['history'])
-
-                st.subheader(f"📊 {messages[lang].get('result', '결과')}")
-                st.write(f"- **{waste_data[result['waste_key']]['names'][lang]}**: {result['count']} {result['unit']}")
-                st.write(f"- **{messages[lang].get('weight', '무게')}:** {result['weight_kg']:.3f} kg")
-                st.write(f"- **CO₂ {messages[lang].get('emitted', '배출량')}:** {result['co2_emitted']:.2f} kg")
-                st.write(f"- **{messages[lang].get('decompose_time', '분해 시간')}:** {result['decompose_time']}")
-                st.success(f"🌱 **{messages[lang].get('eco_tip', '친환경 대안')}:** {result['eco_tip']}")
-
-                today_co2, eco_score = get_today_co2_and_score(st.session_state['history'])
-                st.info(f"📝 {messages[lang]['today_co2_emissions']} {today_co2:.2f} kg")
-                st.success(f"🏆 {messages[lang]['score']} {eco_score:.1f} / 100")
-
-                if st.session_state['settings'].get("daily_target") and today_co2 > st.session_state['settings']["daily_target"]:
-                    st.warning(messages[lang]["over_target"].format(target=st.session_state['settings']["daily_target"]))
-            else:
-                st.error(messages[lang]["invalid_number"].replace("숫자를", "0 이상의 숫자를").replace("Please enter a number.", "Enter a number >= 0."))
-                
     elif choice == menu_options[lang][1]:  # 오늘 배출량 및 점수 확인
         st.header(menu_options[lang][1])
-        today_co2, eco_score = get_today_co2_and_score(st.session_state['history'])
+        today_co2, eco_score = get_today_co2_and_score(st.session_state.get('history', []))
         st.info(f"📝 {messages[lang]['today_co2_emissions']} {today_co2:.2f} kg")
         st.success(f"🏆 {messages[lang]['score']} {eco_score:.1f} / 100")
 
@@ -690,11 +640,13 @@ if choice == menu_options[lang][0]:  # 쓰레기 입력
             target = st.number_input(
                 messages[lang]["daily_target_prompt"],
                 min_value=0.0,
-                value=st.session_state['settings'].get("daily_target", 0.0) or 0.0,
+                value=st.session_state.get('settings', {}).get("daily_target", 0.0) or 0.0,
                 step=0.1,
                 format="%f"
             )
             if st.button(messages[lang]["target_set"]):
+                if 'settings' not in st.session_state:
+                    st.session_state['settings'] = {}
                 st.session_state['settings']["daily_target"] = target
                 save_settings(st.session_state['settings'])
                 st.success(messages[lang]["target_set"])
@@ -710,7 +662,7 @@ if choice == menu_options[lang][0]:  # 쓰레기 입력
 
     elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
         st.header(messages[lang]["compare_title"])
-        today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+        today_co2, _ = get_today_co2_and_score(st.session_state.get('history', []))
 
         st.write(messages[lang]["today_emission_msg"].format(value=today_co2))
         st.write(messages[lang]["korea_avg_msg"].format(value=KOREA_AVG_DAILY_CO2))
@@ -731,6 +683,7 @@ if choice == menu_options[lang][0]:  # 쓰레기 입력
             st.info(messages[lang]["less_than_oecd"])
         else:
             st.info(messages[lang]["more_than_oecd"])
+
 
 if __name__ == "__main__":
     app()
