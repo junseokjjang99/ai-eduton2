@@ -626,59 +626,59 @@ def app():
                     st.error(messages[lang]["invalid_number"].replace("숫자를", "0 이상의 숫자를").replace("Please enter a number.", "Enter a number >= 0."))
 
 
-    elif choice == menu_options[lang][1]:  # 오늘 배출량 및 점수 확인
-        st.header(menu_options[lang][1])
-        today_co2, eco_score = get_today_co2_and_score(st.session_state['history'])
-        st.info(f"📝 {messages[lang]['today_co2_emissions']} {today_co2:.2f} kg")
-        st.success(f"🏆 {messages[lang]['score']} {eco_score:.1f} / 100")
+   if choice == menu_options[lang][1]:  # 오늘 배출량 및 점수 확인
+    st.header(menu_options[lang][1])
+    today_co2, eco_score = get_today_co2_and_score(st.session_state['history'])
+    st.info(f"📝 {messages[lang]['today_co2_emissions']} {today_co2:.2f} kg")
+    st.success(f"🏆 {messages[lang]['score']} {eco_score:.1f} / 100")
 
-    elif choice == menu_options[lang][2]:  # 하루 목표 설정
-        st.header(menu_options[lang][2])
-        try:
-            target = st.number_input(
-                messages[lang]["daily_target_prompt"],
-                min_value=0.0,
-                value=st.session_state['settings'].get("daily_target", 0.0) or 0.0,
-                step=0.1,
-                format="%f"
-            )
-            if st.button(messages[lang]["target_set"].replace("✅ 목표가 설정되었습니다.", "설정").replace("✅ Target set.", "Set").replace("✅ 目标已设置。", "设置")):
-                st.session_state['settings']["daily_target"] = target
-                save_settings(st.session_state['settings'])
-                st.success(messages[lang]["target_set"])
-        except ValueError:
-            st.error(messages[lang]["invalid_number"])
+elif choice == menu_options[lang][2]:  # 하루 목표 설정
+    st.header(menu_options[lang][2])
+    try:
+        target = st.number_input(
+            messages[lang]["daily_target_prompt"],
+            min_value=0.0,
+            value=st.session_state['settings'].get("daily_target", 0.0) or 0.0,
+            step=0.1,
+            format="%f"
+        )
+        if st.button(messages[lang]["target_set"].replace("✅ 목표가 설정되었습니다.", "설정").replace("✅ Target set.", "Set").replace("✅ 目标已设置。", "设置")):
+            st.session_state['settings']["daily_target"] = target
+            save_settings(st.session_state['settings'])
+            st.success(messages[lang]["target_set"])
+    except ValueError:
+        st.error(messages[lang]["invalid_number"])
 
-    elif choice == menu_options[lang][3]:  # 환경 퀴즈
-        st.header(menu_options[lang][3])
-        display_eco_quiz(lang)
+elif choice == menu_options[lang][3]:  # 환경 퀴즈
+    st.header(menu_options[lang][3])
+    display_eco_quiz(lang)
 
-    elif choice == menu_options[lang][4]:
-        display_ai_chat(lang)
+elif choice == menu_options[lang][4]:
+    display_ai_chat(lang)
 
-  elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
-        st.header(messages[lang]["compare_title"])
-        today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
+    st.header(messages[lang]["compare_title"])
+    today_co2, _ = get_today_co2_and_score(st.session_state['history'])
 
-        st.write(messages[lang]["today_emission_msg"].format(value=today_co2))
-        st.write(messages[lang]["korea_avg_msg"].format(value=KOREA_AVG_DAILY_CO2))
-        st.write(messages[lang]["oecd_avg_msg"].format(value=OECD_AVG_DAILY_CO2))
+    st.write(messages[lang]["today_emission_msg"].format(value=today_co2))
+    st.write(messages[lang]["korea_avg_msg"].format(value=KOREA_AVG_DAILY_CO2))
+    st.write(messages[lang]["oecd_avg_msg"].format(value=OECD_AVG_DAILY_CO2))
 
-        st.bar_chart({
-            "오늘 나" if lang == "ko" else "Me" if lang == "en" else "我": [today_co2],
-            "대한민국 평균" if lang == "ko" else "Korea avg" if lang == "en" else "韩国平均": [KOREA_AVG_DAILY_CO2],
-            "OECD 평균" if lang == "ko" else "OECD avg" if lang == "en" else "OECD平均": [OECD_AVG_DAILY_CO2]
-        })
+    st.bar_chart({
+        "오늘 나" if lang == "ko" else "Me" if lang == "en" else "我": [today_co2],
+        "대한민국 평균" if lang == "ko" else "Korea avg" if lang == "en" else "韩国平均": [KOREA_AVG_DAILY_CO2],
+        "OECD 평균" if lang == "ko" else "OECD avg" if lang == "en" else "OECD平均": [OECD_AVG_DAILY_CO2]
+    })
 
-        if today_co2 < KOREA_AVG_DAILY_CO2:
-            st.success(messages[lang]["less_than_korea"])
-        else:
-            st.warning(messages[lang]["more_than_korea"])
+    if today_co2 < KOREA_AVG_DAILY_CO2:
+        st.success(messages[lang]["less_than_korea"])
+    else:
+        st.warning(messages[lang]["more_than_korea"])
 
-        if today_co2 < OECD_AVG_DAILY_CO2:
-            st.info(messages[lang]["less_than_oecd"])
-        else:
-            st.info(messages[lang]["more_than_oecd"])
+    if today_co2 < OECD_AVG_DAILY_CO2:
+        st.info(messages[lang]["less_than_oecd"])
+    else:
+        st.info(messages[lang]["more_than_oecd"])
 
 if __name__ == "__main__":
     app()
