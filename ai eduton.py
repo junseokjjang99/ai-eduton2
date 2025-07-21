@@ -3,7 +3,7 @@ import json
 import os
 import datetime
 import random
-import openai
+from openai import OpenAI
 
 # OpenAI 설정
 
