@@ -293,6 +293,14 @@ messages = {
             "slightly_wilting": "조금 시들었어요. 🌲 탄소 배출량을 줄여주세요!",
             "wilting": "많이 시들었어요. 🍂 환경 보호에 더 신경 써주세요!",
             "dead": "나무가 죽었어요... 💀 심각한 수준입니다. 환경을 위해 노력해주세요!"
+         "compare_title": "📊 내 CO₂ 배출량과 평균 비교",
+        "today_emission_msg": "✅ 오늘 나의 CO₂ 배출량: **{value:.2f} kg**",
+        "korea_avg_msg": "🇰🇷 대한민국 1인당 일일 평균 배출량: **{value:.1f} kg**",
+        "oecd_avg_msg": "🌍 OECD 평균 1인당 일일 배출량: **{value:.1f} kg**",
+        "less_than_korea": "🎉 대한민국 평균보다 적게 배출했어요! 계속 유지해요!",
+        "more_than_korea": "⚠️ 대한민국 평균보다 많이 배출했어요. 조금만 더 줄여볼까요?",
+        "less_than_oecd": "🌱 OECD 평균보다도 낮은 배출량이에요!",
+        "more_than_oecd": "🌏 OECD 평균보다 높은 배출량이에요. 다음엔 더 줄여봐요!"
         }
     },
     "en": {
@@ -317,6 +325,14 @@ messages = {
             "slightly_wilting": "Slightly wilting. 🌲 Please reduce your carbon emissions!",
             "wilting": "Very wilting. 🍂 Pay more attention to environmental protection!",
             "dead": "The tree is dead... 💀 This is serious. Please work for the environment!"
+         "compare_title": "📊 My CO₂ Emissions vs Average",
+        "today_emission_msg": "✅ My CO₂ emissions today: **{value:.2f} kg**",
+        "korea_avg_msg": "🇰🇷 Korea's daily average per person: **{value:.1f} kg**",
+        "oecd_avg_msg": "🌍 OECD average per person: **{value:.1f} kg**",
+        "less_than_korea": "🎉 You emitted less than the Korea average! Keep it up!",
+        "more_than_korea": "⚠️ You emitted more than the Korea average. Let's try to reduce it!",
+        "less_than_oecd": "🌱 Lower than the OECD average!",
+        "more_than_oecd": "🌏 Higher than the OECD average. Let's do better next time!"
         }
     },
     "zh": {
@@ -341,6 +357,14 @@ messages = {
             "slightly_wilting": "有点枯萎了。🌲 请减少碳排放！",
             "wilting": "枯萎得很厉害。🍂 请更注重环境保护！",
             "dead": "树死了... 💀 情况很严重。请为环境努力！"
+        "compare_title": "📊 我的CO₂排放量与平均值比较",
+        "today_emission_msg": "✅ 我今天的CO₂排放量: **{value:.2f} kg**",
+        "korea_avg_msg": "🇰🇷 韩国人均每日平均排放量: **{value:.1f} kg**",
+        "oecd_avg_msg": "🌍 OECD人均每日平均排放量: **{value:.1f} kg**",
+        "less_than_korea": "🎉 少于韩国平均值！继续保持！",
+        "more_than_korea": "⚠️ 高于韩国平均值，再努力减少一点吧！",
+        "less_than_oecd": "🌱 低于OECD平均值！",
+        "more_than_oecd": "🌏 高于OECD平均值，下次努力减少！"
         }
     }
 }
@@ -635,30 +659,29 @@ def app():
     elif choice == menu_options[lang][4]:
         display_ai_chat(lang)
 
-    elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
-        st.header("📊 내 CO₂ 배출량과 평균 비교")
-        today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+  elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
+    st.header(messages[lang]["compare_title"])
+    today_co2, _ = get_today_co2_and_score(st.session_state['history'])
 
-        st.write(f"✅ 오늘 나의 CO₂ 배출량: **{today_co2:.2f} kg**")
-        st.write(f"🇰🇷 대한민국 1인당 일일 평균 배출량: **{KOREA_AVG_DAILY_CO2:.1f} kg**")
-        st.write(f"🌍 OECD 평균 1인당 일일 배출량: **{OECD_AVG_DAILY_CO2:.1f} kg**")
+    st.write(messages[lang]["today_emission_msg"].format(value=today_co2))
+    st.write(messages[lang]["korea_avg_msg"].format(value=KOREA_AVG_DAILY_CO2))
+    st.write(messages[lang]["oecd_avg_msg"].format(value=OECD_AVG_DAILY_CO2))
 
-        st.bar_chart({
-            "오늘 나": [today_co2],
-            "대한민국 평균": [KOREA_AVG_DAILY_CO2],
-            "OECD 평균": [OECD_AVG_DAILY_CO2]
-        })
+    st.bar_chart({
+        "오늘 나" if lang == "ko" else "Me" if lang == "en" else "我": [today_co2],
+        "대한민국 평균" if lang == "ko" else "Korea avg" if lang == "en" else "韩国平均": [KOREA_AVG_DAILY_CO2],
+        "OECD 평균" if lang == "ko" else "OECD avg" if lang == "en" else "OECD平均": [OECD_AVG_DAILY_CO2]
+    })
 
-        if today_co2 < KOREA_AVG_DAILY_CO2:
-            st.success("🎉 대한민국 평균보다 적게 배출했어요! 계속 유지해요!")
-        else:
-            st.warning("⚠️ 대한민국 평균보다 많이 배출했어요. 조금만 더 줄여볼까요?")
+    if today_co2 < KOREA_AVG_DAILY_CO2:
+        st.success(messages[lang]["less_than_korea"])
+    else:
+        st.warning(messages[lang]["more_than_korea"])
 
-        if today_co2 < OECD_AVG_DAILY_CO2:
-            st.info("🌱 OECD 평균보다도 낮은 배출량이에요!")
-        else:
-            st.info("🌏 OECD 평균보다 높은 배출량이에요. 다음엔 더 줄여봐요!")
-
+    if today_co2 < OECD_AVG_DAILY_CO2:
+        st.info(messages[lang]["less_than_oecd"])
+    else:
+        st.info(messages[lang]["more_than_oecd"])
 
 if __name__ == "__main__":
     app()
