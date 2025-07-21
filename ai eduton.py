@@ -635,29 +635,29 @@ def app():
     elif choice == menu_options[lang][4]:
         display_ai_chat(lang)
 
-elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
-    st.header("📊 내 CO₂ 배출량과 평균 비교")
-    today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+    elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
+        st.header("📊 내 CO₂ 배출량과 평균 비교")
+        today_co2, _ = get_today_co2_and_score(st.session_state['history'])
 
-    st.write(f"✅ 오늘 나의 CO₂ 배출량: **{today_co2:.2f} kg**")
-    st.write(f"🇰🇷 대한민국 1인당 일일 평균 배출량: **{KOREA_AVG_DAILY_CO2:.1f} kg**")
-    st.write(f"🌍 OECD 평균 1인당 일일 배출량: **{OECD_AVG_DAILY_CO2:.1f} kg**")
+        st.write(f"✅ 오늘 나의 CO₂ 배출량: **{today_co2:.2f} kg**")
+        st.write(f"🇰🇷 대한민국 1인당 일일 평균 배출량: **{KOREA_AVG_DAILY_CO2:.1f} kg**")
+        st.write(f"🌍 OECD 평균 1인당 일일 배출량: **{OECD_AVG_DAILY_CO2:.1f} kg**")
 
-    st.bar_chart({
-        "오늘 나": [today_co2],
-        "대한민국 평균": [KOREA_AVG_DAILY_CO2],
-        "OECD 평균": [OECD_AVG_DAILY_CO2]
-    })
+        st.bar_chart({
+            "오늘 나": [today_co2],
+            "대한민국 평균": [KOREA_AVG_DAILY_CO2],
+            "OECD 평균": [OECD_AVG_DAILY_CO2]
+        })
 
-    if today_co2 < KOREA_AVG_DAILY_CO2:
-        st.success("🎉 대한민국 평균보다 적게 배출했어요! 계속 유지해요!")
-    else:
-        st.warning("⚠️ 대한민국 평균보다 많이 배출했어요. 조금만 더 줄여볼까요?")
+        if today_co2 < KOREA_AVG_DAILY_CO2:
+            st.success("🎉 대한민국 평균보다 적게 배출했어요! 계속 유지해요!")
+        else:
+            st.warning("⚠️ 대한민국 평균보다 많이 배출했어요. 조금만 더 줄여볼까요?")
 
-    if today_co2 < OECD_AVG_DAILY_CO2:
-        st.info("🌱 OECD 평균보다도 낮은 배출량이에요!")
-    else:
-        st.info("🌏 OECD 평균보다 높은 배출량이에요. 다음엔 더 줄여봐요!")
+        if today_co2 < OECD_AVG_DAILY_CO2:
+            st.info("🌱 OECD 평균보다도 낮은 배출량이에요!")
+        else:
+            st.info("🌏 OECD 평균보다 높은 배출량이에요. 다음엔 더 줄여봐요!")
 
 
 if __name__ == "__main__":
