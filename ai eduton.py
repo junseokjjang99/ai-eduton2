@@ -3,10 +3,10 @@ import json
 import os
 import datetime
 import random
-import openai  # 🔧 기존: from openai import OpenAI → 수정
+import openai  # 🔧 수정: from openai import OpenAI → openai 사용
 
-# OpenAI 설정 (필수: Streamlit secrets에 API_KEY 추가)
-openai.api_key = st.secrets["API_KEY"]  # 🔧 수정: client 객체 대신 api_key 설정
+# OpenAI 설정
+openai.api_key = st.secrets["API_KEY"]  # 🔧 수정: client 사용 대신 openai.api_key
 
 # 대한민국, OECD 평균 CO₂ 배출량 (1인당, 일일, kg)
 KOREA_AVG_DAILY_CO2 = 27.0
@@ -28,9 +28,10 @@ waste_data = {
         "decompose_months": 3,
         "eco_alternative": {"ko": "디지털 문서 활용", "en": "Use digital documents", "zh": "使用电子文档"}
     },
-    # 필요한 다른 항목 추가...
+    # 필요한 다른 항목 추가 가능
 }
 
+# 이모지 및 CO₂ 상태 기준
 TREE_STATUS_EMOJIS = {"healthy": "🌳", "slightly_wilting": "🌲", "wilting": "🍂", "dead": "🪵"}
 CO2_THRESHOLDS = {"healthy": 2.0, "slightly_wilting": 5.0, "wilting": 10.0}
 
@@ -57,17 +58,18 @@ def save_settings(settings):
     with open("settings.json", "w", encoding="utf-8") as f:
         json.dump(settings, f, ensure_ascii=False, indent=2)
 
-# 🔧 수정된 함수 (OpenAI 호출)
+# AI 상담 함수
 def ask_ai(question):
-    response = openai.ChatCompletion.create(  # 🔧 client.chat.completions.create → openai.ChatCompletion.create
+    response = openai.ChatCompletion.create(  # 🔧 수정된 Chat API 사용
         model="gpt-4o",
         messages=[
             {"role": "system", "content": "너는 친환경 전문가 AI야."},
             {"role": "user", "content": question}
         ]
     )
-    return response.choices[0].message.content.strip()  # 🔧 message.content 접근 방식으로 수정
+    return response.choices[0].message.content.strip()
 
+# CO₂ 및 환경 영향 계산
 def calculate_impact(waste_key, count, lang):
     data = waste_data[waste_key]
     weight_kg = count * data["unit_weight"]
@@ -91,11 +93,11 @@ def get_tree_status(total_co2):
     elif total_co2 < CO2_THRESHOLDS["wilting"]: return "wilting"
     else: return "dead"
 
-# 앱 본체
+# 앱 실행 본체
 def app():
     st.set_page_config(page_title="친환경 배출 추적기 🌱", layout="centered")
 
-    # 세션 상태
+    # 세션 초기화
     if "lang" not in st.session_state:
         st.session_state.lang = "ko"
     if "history" not in st.session_state:
@@ -103,8 +105,8 @@ def app():
     if "settings" not in st.session_state:
         st.session_state.settings = load_settings()
 
-    # 언어 설정
-    lang_map = {"ko": "한국어", "en": "English", "zh": "中文"}
+    # 언어 선택
+    lang_map = {"ko":"한국어","en":"English","zh":"中文"}
     lang = st.sidebar.selectbox("언어 / Language", options=list(lang_map.keys()), format_func=lambda x: lang_map[x])
     st.session_state.lang = lang
 
@@ -119,7 +121,7 @@ def app():
     choice = st.selectbox("쓰레기 종류 선택", options=waste_options)
     count = st.number_input("수량 입력", min_value=1, value=1)
     if st.button("저장"):
-        key = [k for k, v in waste_data.items() if v["names"][lang] == choice][0]
+        key = [k for k,v in waste_data.items() if v["names"][lang]==choice][0]
         rec = calculate_impact(key, count, lang)
         st.session_state.history.append(rec)
         save_history(st.session_state.history)
