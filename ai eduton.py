@@ -195,7 +195,6 @@ messages = {
         }
     }
 }
-
 compare_messages = {
     "ko": {
         "header": "📊 내 CO₂ 배출량과 평균 비교",
@@ -228,6 +227,7 @@ compare_messages = {
         "more_than_oecd": "🌏 你的排放量高于OECD平均水平。下次努力减少！"
     }
 }
+
 
 eco_quotes = [
     "작은 실천이 큰 변화를 만듭니다.",
@@ -329,16 +329,16 @@ def display_eco_quiz(lang):
 
     options = quiz["options"][lang]
     answer_index = quiz["answer"]
-    user_answer = st.radio("선택하세요:" if lang=="ko" else "Select:", options, key="quiz_answer")
+    user_answer = st.radio("선택하세요:", options, key="quiz_answer")
 
-    if st.button("제출" if lang=="ko" else "Submit", key="quiz_submit"):
+    if st.button("제출", key="quiz_submit"):
         if user_answer == options[answer_index]:
             st.success(messages[lang]["quiz_correct"])
         else:
             st.error(messages[lang]["quiz_incorrect"])
 
 def display_ai_chat(lang):
-    st.header("AI 친환경 상담" if lang=="ko" else "AI Eco Chat" if lang=="en" else "AI环保咨询")
+    st.header("AI 친환경 상담")
     question = st.text_input("질문을 입력하세요:" if lang=="ko" else "Enter your question:" if lang=="en" else "请输入问题：")
 
     if st.button("전송" if lang=="ko" else "Send" if lang=="en" else "发送"):
@@ -357,7 +357,7 @@ def app():
     st.sidebar.title("🌐 언어 선택")
     language_options = {"ko": "한국어", "en": "English", "zh": "中文"}
     selected_language_name = st.sidebar.radio(
-        "언어를 선택하세요:" if st.session_state['current_language']=="ko" else "Select your language:" if st.session_state['current_language']=="en" else "请选择语言：",
+        "언어를 선택하세요:",
         options=list(language_options.values()),
         index=list(language_options.keys()).index(st.session_state['current_language'])
     )
@@ -371,72 +371,113 @@ def app():
     st.title(messages[lang]["welcome"])
     st.write(random.choice(eco_quotes))
 
-    # CO2 배출 기록 입력
-    st.header(messages[lang]["input_waste"])
-    waste_keys = list(waste_data.keys())
-    waste_names = [waste_data[w]["names"][lang] for w in waste_keys]
-    selected_waste_index = st.selectbox("", waste_names)
-    waste_key = waste_keys[waste_names.index(selected_waste_index)]
+    current_co2, _ = get_today_co2_and_score(st.session_state['history'])
+    tree_status = get_tree_status(current_co2)
+    tree_emoji = TREE_STATUS_EMOJIS[tree_status]
+    tree_message = messages[lang]["tree_status_messages"][tree_status]
 
-    count_input = st.text_input(messages[lang]["input_count"])
-    if count_input:
-        try:
-            count = int(count_input)
+    st.markdown(
+        f"<p style='text-align: center; font-size: 5em;'>{tree_emoji}</p>",
+        unsafe_allow_html=True
+    )
+    st.write(f"<p style='text-align: center;'>현재 CO₂ 배출량: <b>{current_co2:.2f} kg</b></p>", unsafe_allow_html=True)
+
+    if tree_status == "healthy":
+        message_style = "background-color: #e6ffe6; color: #1f7a1f; padding: 10px; border-radius: 5px;"
+    elif tree_status == "slightly_wilting":
+        message_style = "background-color: #e6f7ff; color: #1f6b8f; padding: 10px; border-radius: 5px;"
+    elif tree_status == "wilting":
+        message_style = "background-color: #fff8e6; color: #a37200; padding: 10px; border-radius: 5px;"
+    else:
+        message_style = "background-color: #ffe6e6; color: #a30000; padding: 10px; border-radius: 5px;"
+
+    st.markdown(
+        f"<p style='text-align: center; {message_style}'><b>{tree_message}</b></p>",
+        unsafe_allow_html=True
+    )
+
+    st.sidebar.title("메뉴")
+    menu_options = {
+        "ko": ["쓰레기 입력", "오늘 배출량 및 점수 확인", "하루 목표 설정", "환경 퀴즈", "AI챗봇", "평균 배출량과 비교"],
+        "en": ["Enter waste", "View today's emissions and score", "Set daily target", "Eco Quiz", "AI Chatbot", "Compare with average"],
+        "zh": ["输入垃圾", "查看今日排放量和分数", "设置每日目标", "环保测验", "AI环保咨询", "与平均值比较"]
+    }
+
+    choice = st.sidebar.radio("옵션을 선택하세요:", menu_options[lang])
+
+    if choice == menu_options[lang][0]:
+        st.header(messages[lang]["input_waste"])
+        options = [waste_data[key]["names"][lang] for key in waste_data]
+        selected = st.selectbox("", options)
+
+        waste_key = None
+        for key, data in waste_data.items():
+            if data["names"][lang] == selected:
+                waste_key = key
+                break
+
+        count = st.number_input(messages[lang]["input_count"], min_value=0, step=1)
+
+        if st.button("저장"):
             if count <= 0:
                 st.error(messages[lang]["invalid_input"])
             else:
-                impact = calculate_impact(waste_key, count, lang)
-                st.write(f"배출한 {impact['count']} {impact['unit']}는 약 {impact['weight_kg']:.3f}kg이며, CO₂ 배출량은 {impact['co2_emitted']:.3f}kg 입니다.")
-                st.write(f"분해 기간: {impact['decompose_time']}")
-                st.write(f"친환경 팁: {impact['eco_tip']}")
+                record = calculate_impact(waste_key, count, lang)
+                st.session_state['history'].append(record)
+                save_history(st.session_state['history'])
+                st.success(messages[lang]["record_saved"])
 
-                if st.button("저장"):
-                    st.session_state['history'].append(impact)
-                    save_history(st.session_state['history'])
-                    st.success(messages[lang]["record_saved"])
-        except ValueError:
-            st.error(messages[lang]["invalid_input"])
+                st.markdown(f"**{record['waste_key']}**: {record['count']} {record['unit']} / CO₂ 배출량: {record['co2_emitted']:.2f} kg")
+                st.markdown(f"분해 기간: {record['decompose_time']}")
+                st.markdown(f"친환경 팁: {record['eco_tip']}")
 
-    # 오늘 배출량과 점수 표시
-    total_co2, eco_score = get_today_co2_and_score(st.session_state['history'])
-    st.header(messages[lang]["today_emission"])
-    st.write(f"**{total_co2:.3f} kg CO₂**")
-    st.header(messages[lang]["eco_score"])
-    st.write(f"**{eco_score} 점**")
+    elif choice == menu_options[lang][1]:
+        st.header(messages[lang]["today_emission"])
+        total_co2, eco_score = get_today_co2_and_score(st.session_state['history'])
+        st.write(f"CO₂ 배출량: {total_co2:.2f} kg")
+        st.write(f"{messages[lang]['eco_score']}: {eco_score:.0f}/100")
 
-    # 나무 상태 표시
-    tree_status = get_tree_status(total_co2)
-    st.write(TREE_STATUS_EMOJIS[tree_status] + " " + messages[lang]["tree_status_messages"][tree_status])
+    elif choice == menu_options[lang][2]:
+        st.header(messages[lang]["set_daily_target"])
+        current_target = st.session_state['settings'].get("daily_target", None)
+        new_target = st.number_input("", min_value=0.0, value=current_target if current_target else 5.0)
 
-    # CO2 배출량 목표 설정
-    st.header(messages[lang]["set_daily_target"])
-    daily_target = st.number_input("", min_value=0.0, value=st.session_state['settings'].get("daily_target") or 10.0, step=0.1)
-    if st.button("저장 목표"):
-        st.session_state['settings']['daily_target'] = daily_target
-        save_settings(st.session_state['settings'])
-        st.success(messages[lang]["target_saved"])
+        if st.button("저장"):
+            st.session_state['settings']["daily_target"] = new_target
+            save_settings(st.session_state['settings'])
+            st.success(messages[lang]["target_saved"])
 
-    # 오늘 배출량 평균 비교
-    st.header(compare_messages[lang]["header"])
-    st.write(compare_messages[lang]["today_co2"].format(value=total_co2))
-    st.write(compare_messages[lang]["korea_avg"].format(value=KOREA_AVG_DAILY_CO2))
-    st.write(compare_messages[lang]["oecd_avg"].format(value=OECD_AVG_DAILY_CO2))
+    elif choice == menu_options[lang][3]:
+        display_eco_quiz(lang)
 
-    if total_co2 < KOREA_AVG_DAILY_CO2:
-        st.success(compare_messages[lang]["less_than_korea"])
+    elif choice == menu_options[lang][4]:
+        display_ai_chat(lang)
+
+elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
+    msg = compare_messages[lang]
+    st.header(msg["header"])
+    today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+
+    st.write(msg["today_co2"].format(value=today_co2))
+    st.write(msg["korea_avg"].format(value=KOREA_AVG_DAILY_CO2))
+    st.write(msg["oecd_avg"].format(value=OECD_AVG_DAILY_CO2))
+
+    st.bar_chart({
+        "오늘 나" if lang=="ko" else "Me" if lang=="en" else "我": [today_co2],
+        "대한민국 평균" if lang=="ko" else "Korea Avg" if lang=="en" else "韩国平均": [KOREA_AVG_DAILY_CO2],
+        "OECD 평균" if lang=="ko" else "OECD Avg" if lang=="en" else "OECD平均": [OECD_AVG_DAILY_CO2]
+    })
+
+    if today_co2 < KOREA_AVG_DAILY_CO2:
+        st.success(msg["less_than_korea"])
     else:
-        st.warning(compare_messages[lang]["more_than_korea"])
+        st.warning(msg["more_than_korea"])
 
-    if total_co2 < OECD_AVG_DAILY_CO2:
-        st.success(compare_messages[lang]["less_than_oecd"])
+    if today_co2 < OECD_AVG_DAILY_CO2:
+        st.info(msg["less_than_oecd"])
     else:
-        st.warning(compare_messages[lang]["more_than_oecd"])
+        st.info(msg["more_than_oecd"])
 
-    # 친환경 퀴즈 보여주기
-    display_eco_quiz(lang)
-
-    # AI 친환경 상담
-    display_ai_chat(lang)
 
 if __name__ == "__main__":
     app()
