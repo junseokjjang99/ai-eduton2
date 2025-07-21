@@ -733,7 +733,7 @@ if choice == menu_options[lang][0]:  # 쓰레기 입력
             st.info(messages[lang]["more_than_oecd"])
 
 if __name__ == "__main__":
-    app() 전체코드에 반영해줘 딕셔너리 빼먹지 말고 전체
+    app() 
     # 사이드바 라디오 버튼을 사용하여 메인 메뉴
     st.sidebar.title("메뉴")
     menu_options = {
