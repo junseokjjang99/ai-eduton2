@@ -195,6 +195,39 @@ messages = {
         }
     }
 }
+compare_messages = {
+    "ko": {
+        "header": "📊 내 CO₂ 배출량과 평균 비교",
+        "today_co2": "✅ 오늘 나의 CO₂ 배출량: **{value:.2f} kg**",
+        "korea_avg": "🇰🇷 대한민국 1인당 일일 평균 배출량: **{value:.1f} kg**",
+        "oecd_avg": "🌍 OECD 평균 1인당 일일 배출량: **{value:.1f} kg**",
+        "less_than_korea": "🎉 대한민국 평균보다 적게 배출했어요! 계속 유지해요!",
+        "more_than_korea": "⚠️ 대한민국 평균보다 많이 배출했어요. 조금만 더 줄여볼까요?",
+        "less_than_oecd": "🌱 OECD 평균보다도 낮은 배출량이에요!",
+        "more_than_oecd": "🌏 OECD 평균보다 높은 배출량이에요. 다음엔 더 줄여봐요!"
+    },
+    "en": {
+        "header": "📊 Compare My CO₂ Emissions with Averages",
+        "today_co2": "✅ My CO₂ emissions today: **{value:.2f} kg**",
+        "korea_avg": "🇰🇷 South Korea's average daily per capita: **{value:.1f} kg**",
+        "oecd_avg": "🌍 OECD average daily per capita: **{value:.1f} kg**",
+        "less_than_korea": "🎉 You emitted less than the South Korea average! Keep it up!",
+        "more_than_korea": "⚠️ You emitted more than the South Korea average. Let's try to reduce it!",
+        "less_than_oecd": "🌱 Your emissions are below the OECD average!",
+        "more_than_oecd": "🌏 Your emissions are above the OECD average. Try to reduce next time!"
+    },
+    "zh": {
+        "header": "📊 我的CO₂排放量与平均值比较",
+        "today_co2": "✅ 我今天的CO₂排放量: **{value:.2f} kg**",
+        "korea_avg": "🇰🇷 韩国人均每日平均排放量: **{value:.1f} kg**",
+        "oecd_avg": "🌍 OECD人均每日平均排放量: **{value:.1f} kg**",
+        "less_than_korea": "🎉 你的排放量低于韩国平均水平！继续保持！",
+        "more_than_korea": "⚠️ 你的排放量高于韩国平均水平。试着减少排放吧！",
+        "less_than_oecd": "🌱 你的排放量低于OECD平均水平！",
+        "more_than_oecd": "🌏 你的排放量高于OECD平均水平。下次努力减少！"
+    }
+}
+
 
 eco_quotes = [
     "작은 실천이 큰 변화를 만듭니다.",
@@ -420,52 +453,19 @@ def app():
     elif choice == menu_options[lang][4]:
         display_ai_chat(lang)
 
-compare_messages = {
-    "ko": {
-        "header": "📊 내 CO₂ 배출량과 평균 비교",
-        "today_co2": "✅ 오늘 나의 CO₂ 배출량: **{value:.2f} kg**",
-        "korea_avg": "🇰🇷 대한민국 1인당 일일 평균 배출량: **{value:.1f} kg**",
-        "oecd_avg": "🌍 OECD 평균 1인당 일일 배출량: **{value:.1f} kg**",
-        "less_than_korea": "🎉 대한민국 평균보다 적게 배출했어요! 계속 유지해요!",
-        "more_than_korea": "⚠️ 대한민국 평균보다 많이 배출했어요. 조금만 더 줄여볼까요?",
-        "less_than_oecd": "🌱 OECD 평균보다도 낮은 배출량이에요!",
-        "more_than_oecd": "🌏 OECD 평균보다 높은 배출량이에요. 다음엔 더 줄여봐요!"
-    },
-    "en": {
-        "header": "📊 Compare My CO₂ Emissions with Averages",
-        "today_co2": "✅ My CO₂ emissions today: **{value:.2f} kg**",
-        "korea_avg": "🇰🇷 South Korea's average daily per capita: **{value:.1f} kg**",
-        "oecd_avg": "🌍 OECD average daily per capita: **{value:.1f} kg**",
-        "less_than_korea": "🎉 You emitted less than the South Korea average! Keep it up!",
-        "more_than_korea": "⚠️ You emitted more than the South Korea average. Let's try to reduce it!",
-        "less_than_oecd": "🌱 Your emissions are below the OECD average!",
-        "more_than_oecd": "🌏 Your emissions are above the OECD average. Try to reduce next time!"
-    },
-    "zh": {
-        "header": "📊 我的CO₂排放量与平均值比较",
-        "today_co2": "✅ 我今天的CO₂排放量: **{value:.2f} kg**",
-        "korea_avg": "🇰🇷 韩国人均每日平均排放量: **{value:.1f} kg**",
-        "oecd_avg": "🌍 OECD人均每日平均排放量: **{value:.1f} kg**",
-        "less_than_korea": "🎉 你的排放量低于韩国平均水平！继续保持！",
-        "more_than_korea": "⚠️ 你的排放量高于韩国平均水平。试着减少排放吧！",
-        "less_than_oecd": "🌱 你的排放量低于OECD平均水平！",
-        "more_than_oecd": "🌏 你的排放量高于OECD平均水平。下次努力减少！"
-    }
-}
+    elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
+        msg = compare_messages[lang]
+        st.header(msg["header"])
+        today_co2, _ = get_today_co2_and_score(st.session_state['history'])
 
-elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
-    msg = compare_messages[lang]
-    st.header(msg["header"])
-    today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+        st.write(msg["today_co2"].format(value=today_co2))
+        st.write(msg["korea_avg"].format(value=KOREA_AVG_DAILY_CO2))
+        st.write(msg["oecd_avg"].format(value=OECD_AVG_DAILY_CO2))
 
-    st.write(msg["today_co2"].format(value=today_co2))
-    st.write(msg["korea_avg"].format(value=KOREA_AVG_DAILY_CO2))
-    st.write(msg["oecd_avg"].format(value=OECD_AVG_DAILY_CO2))
-
-    st.bar_chart({
-        msg["header"]: [today_co2],
-        msg["korea_avg"]: [KOREA_AVG_DAILY_CO2],
-        msg["oecd_avg"]: [OECD_AVG_DAILY_CO2]
+        st.bar_chart({
+            msg["header"]: [today_co2],
+            msg["korea_avg"]: [KOREA_AVG_DAILY_CO2],
+            msg["oecd_avg"]: [OECD_AVG_DAILY_CO2]
     })
 
     if today_co2 < KOREA_AVG_DAILY_CO2:
