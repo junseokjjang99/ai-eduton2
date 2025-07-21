@@ -5,6 +5,10 @@ import datetime
 import random
 from openai import OpenAI
 
+
+KOREA_AVG_DAILY_CO2 = 27.0  
+OECD_AVG_DAILY_CO2 = 30.0
+
 # OpenAI 설정
 
 client = OpenAI(api_key=st.secrets["API_KEY"])
@@ -289,6 +293,7 @@ messages = {
             "slightly_wilting": "조금 시들었어요. 🌲 탄소 배출량을 줄여주세요!",
             "wilting": "많이 시들었어요. 🍂 환경 보호에 더 신경 써주세요!",
             "dead": "나무가 죽었어요... 💀 심각한 수준입니다. 환경을 위해 노력해주세요!"
+             "ko": ["쓰레기 입력", "오늘 배출량 및 점수 확인", "하루 목표 설정", "환경 퀴즈", "AI챗봇", "평균 배출량과 비교"]
         }
     },
     "en": {
@@ -313,6 +318,7 @@ messages = {
             "slightly_wilting": "Slightly wilting. 🌲 Please reduce your carbon emissions!",
             "wilting": "Very wilting. 🍂 Pay more attention to environmental protection!",
             "dead": "The tree is dead... 💀 This is serious. Please work for the environment!"
+    "en": ["Enter waste", "View today's emissions and score", "Set daily target", "Eco Quiz", "AI Chatbot", "Compare with average"]
         }
     },
     "zh": {
@@ -337,6 +343,7 @@ messages = {
             "slightly_wilting": "有点枯萎了。🌲 请减少碳排放！",
             "wilting": "枯萎得很厉害。🍂 请更注重环境保护！",
             "dead": "树死了... 💀 情况很严重。请为环境努力！"
+    "zh": ["输入垃圾", "查看今日排放量和分数", "设置每日目标", "环保测验", "AI环保咨询", "与平均值比较"]
         }
     }
 }
@@ -630,6 +637,30 @@ def app():
 
     elif choice == menu_options[lang][4]:
         display_ai_chat(lang)
+
+elif choice == menu_options[lang][5]:  # 평균 배출량과 비교
+    st.header("📊 내 CO₂ 배출량과 평균 비교")
+    today_co2, _ = get_today_co2_and_score(st.session_state['history'])
+
+    st.write(f"✅ 오늘 나의 CO₂ 배출량: **{today_co2:.2f} kg**")
+    st.write(f"🇰🇷 대한민국 1인당 일일 평균 배출량: **{KOREA_AVG_DAILY_CO2:.1f} kg**")
+    st.write(f"🌍 OECD 평균 1인당 일일 배출량: **{OECD_AVG_DAILY_CO2:.1f} kg**")
+
+    st.bar_chart({
+        "오늘 나": [today_co2],
+        "대한민국 평균": [KOREA_AVG_DAILY_CO2],
+        "OECD 평균": [OECD_AVG_DAILY_CO2]
+    })
+
+    if today_co2 < KOREA_AVG_DAILY_CO2:
+        st.success("🎉 대한민국 평균보다 적게 배출했어요! 계속 유지해요!")
+    else:
+        st.warning("⚠️ 대한민국 평균보다 많이 배출했어요. 조금만 더 줄여볼까요?")
+
+    if today_co2 < OECD_AVG_DAILY_CO2:
+        st.info("🌱 OECD 평균보다도 낮은 배출량이에요!")
+    else:
+        st.info("🌏 OECD 평균보다 높은 배출량이에요. 다음엔 더 줄여봐요!")
 
 
 if __name__ == "__main__":
